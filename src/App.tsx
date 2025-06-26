@@ -22,7 +22,7 @@ import Guide from "./pages/Guide";
 import Achievements from "./pages/Achievements";
 import Events from "./pages/Events";
 import NotFound from "./pages/NotFound";
-import Admin from "./pages/Admin";
+import Admin from "./pages/admin/Admin";
 
 const queryClient = new QueryClient();
 
@@ -33,27 +33,30 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <div className="min-h-screen bg-black text-white">
+          <div className="min-h-screen bg-black text-white flex flex-col">
             <Navbar />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/signin" element={<SignIn />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/verify-email" element={<VerifyEmail />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/labs" element={<Labs />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/attackerbox" element={<AttackerBox />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/leaderboard" element={<Leaderboard />} />
-              <Route path="/guide" element={<Guide />} />
-              <Route path="/achievements" element={<Achievements />} />
-              <Route path="/events" element={<Events />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <div className="flex-1 pb-12">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/signin" element={<SignIn />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/verify-email" element={<VerifyEmail />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/labs" element={<Labs />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/attackerbox" element={<AttackerBox />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/leaderboard" element={<Leaderboard />} />
+                <Route path="/guide" element={<Guide />} />
+                <Route path="/achievements" element={<Achievements />} />
+                <Route path="/events" element={<Events />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/admin/eventedit" element={<div>Event Edit Page</div>} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
             <Footer />
           </div>
         </AuthProvider>
