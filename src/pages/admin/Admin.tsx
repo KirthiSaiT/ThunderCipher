@@ -31,6 +31,7 @@ import {
   Home
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 const ADMIN_EMAIL = 'kirthisai251@gmail.com';
 
@@ -58,10 +59,27 @@ const Admin = () => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [activeSection, setActiveSection] = useState('dashboard');
   const [stats, setStats] = useState(mockStats);
+  const [userCount, setUserCount] = useState<number | null>(null);
   const [recentActivity, setRecentActivity] = useState(mockRecentActivity);
 
   // Mock user object - replace with actual useAuth hook
   const user = { email: ADMIN_EMAIL };
+
+  useEffect(() => {
+    const fetchUserCount = async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('username');
+      if (!error && data) {
+        // Count unique usernames (ignoring nulls)
+        const uniqueUsernames = new Set(data.filter(row => row.username).map(row => row.username));
+        setUserCount(uniqueUsernames.size);
+      }
+    };
+    fetchUserCount();
+    const interval = setInterval(fetchUserCount, 10000); // Poll every 10s
+    return () => clearInterval(interval);
+  }, []);
 
   if (!user || user.email !== ADMIN_EMAIL) {
     return (
@@ -132,7 +150,7 @@ const Admin = () => {
     <div className="space-y-8">
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard icon={Users} title="Total Users" value={stats.totalUsers.toLocaleString()} change="+12%" changeType="positive" />
+        <StatCard icon={Users} title="Total Users" value={userCount !== null ? userCount.toLocaleString() : '...'} change="+12%" changeType="positive" />
         <StatCard icon={Shield} title="Active Labs" value={stats.activeLabs} change="+5%" changeType="positive" />
         <StatCard icon={Flag} title="Running Challenges" value={stats.runningChallenges} change="+8%" changeType="positive" />
         <StatCard icon={Calendar} title="Upcoming Events" value={stats.upcomingEvents} change="+2%" changeType="positive" />
