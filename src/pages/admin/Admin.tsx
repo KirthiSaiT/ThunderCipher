@@ -67,14 +67,8 @@ const Admin = () => {
 
   useEffect(() => {
     const fetchUserCount = async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('username');
-      if (!error && data) {
-        // Count unique usernames (ignoring nulls)
-        const uniqueUsernames = new Set(data.filter(row => row.username).map(row => row.username));
-        setUserCount(uniqueUsernames.size);
-      }
+      const { data, error } = await supabase.rpc('get_auth_user_count');
+      if (!error && typeof data === 'number') setUserCount(data);
     };
     fetchUserCount();
     const interval = setInterval(fetchUserCount, 10000); // Poll every 10s
