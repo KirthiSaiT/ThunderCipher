@@ -155,6 +155,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       });
 
+      console.log('Supabase signup response:', { data, error });
+
       if (error) {
         toast({
           title: "Signup Failed",
@@ -164,10 +166,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return false;
       }
 
-      // For testing purposes, show success message
       toast({
         title: "Account Created Successfully!",
-        description: "Please check your email for verification code.",
+        description: "Please check your email for a verification link to complete the signup.",
       });
       
       return true;
