@@ -143,19 +143,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signup = async (username: string, email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     try {
-      // For development/testing, we'll skip email confirmation
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            username: username,
-          },
-          emailRedirectTo: `${window.location.origin}/dashboard`
+          data: { username }
         }
       });
-
-      console.log('Supabase signup response:', { data, error });
 
       if (error) {
         toast({
@@ -167,10 +161,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       toast({
-        title: "Account Created Successfully!",
-        description: "Please check your email for a verification link to complete the signup.",
+        title: `${username} created`,
+        description: "Account created successfully! Redirecting to dashboard...",
       });
-      
+
+      // Optionally, insert into profiles table if you use it
+      // await supabase.from('profiles').insert({
+      //   id: data.user.id,
+      //   email,
+      //   username,
+      //   created_at: new Date().toISOString()
+      // });
+
+      // Redirect to dashboard
+      window.location.href = "/dashboard";
       return true;
     } catch (error) {
       toast({
