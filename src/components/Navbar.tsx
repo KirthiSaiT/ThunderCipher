@@ -10,6 +10,8 @@ const Navbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  const ADMIN_EMAIL = 'kirthisai251@gmail.com';
+
   const handleLogout = async () => {
     await logout();
     navigate('/');
@@ -56,6 +58,15 @@ const Navbar = () => {
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full"></span>
               </Link>
             ))}
+            {user && user.email === ADMIN_EMAIL && (
+              <Link
+                to="/admin"
+                className="text-cyan-400 font-bold hover:text-cyan-300 transition-colors font-mono text-sm relative group"
+              >
+                Admin Dashboard
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-400 transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+            )}
           </div>
 
           {/* User Menu / Auth Buttons */}
@@ -83,6 +94,15 @@ const Navbar = () => {
                         {item.name}
                       </Link>
                     ))}
+                    {user.email === ADMIN_EMAIL && (
+                      <Link
+                        to="/admin"
+                        onClick={() => setShowUserMenu(false)}
+                        className="flex items-center px-4 py-2 text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/10 transition-colors font-mono text-sm font-bold"
+                      >
+                        Admin Dashboard
+                      </Link>
+                    )}
                     <hr className="my-2 border-cyan-500/20" />
                     <button
                       onClick={handleLogout}
@@ -135,7 +155,15 @@ const Navbar = () => {
                   {item.name}
                 </Link>
               ))}
-              
+              {user && user.email === ADMIN_EMAIL && (
+                <Link
+                  to="/admin"
+                  onClick={() => setIsOpen(false)}
+                  className="block px-4 py-2 text-cyan-400 font-bold hover:text-cyan-300 hover:bg-cyan-500/10 transition-colors font-mono text-sm rounded"
+                >
+                  Admin Dashboard
+                </Link>
+              )}
               {user ? (
                 <>
                   <hr className="my-2 border-cyan-500/20" />

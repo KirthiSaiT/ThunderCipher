@@ -22,6 +22,7 @@ import Guide from "./pages/Guide";
 import Achievements from "./pages/Achievements";
 import Events from "./pages/Events";
 import NotFound from "./pages/NotFound";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
               <Route path="/guide" element={<Guide />} />
               <Route path="/achievements" element={<Achievements />} />
               <Route path="/events" element={<Events />} />
+              <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Footer />
