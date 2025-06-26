@@ -404,6 +404,27 @@ const Admin = () => {
           </ManagementSection>
         );
 
+      case 'hosts':
+        return (
+          <ManagementSection title="Hosts (Admins)" icon={Users}>
+            <div className="glass-card p-6 rounded-xl border border-slate-700/50">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-semibold text-white">Current Admins</h3>
+                <button className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold transition-colors">Add Admin</button>
+              </div>
+              {/* Example admin list, replace with real data if available */}
+              <ul className="space-y-3">
+                <li className="flex items-center space-x-3">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center text-white font-semibold text-sm">A</div>
+                  <span className="text-white font-medium">kirthisai251@gmail.com</span>
+                  <span className="ml-2 px-2 py-0.5 rounded bg-green-700 text-xs text-white">Super Admin</span>
+                </li>
+                {/* Add more admins here as needed */}
+              </ul>
+            </div>
+          </ManagementSection>
+        );
+
       default:
         return <DashboardContent />;
     }
@@ -464,7 +485,7 @@ const Admin = () => {
                 { id: 'events', icon: Calendar, label: 'Events' },
                 { id: 'announcements', icon: Megaphone, label: 'Announcements' },
                 { id: 'users', icon: Users, label: 'Users' },
-                { id: 'analytics', icon: TrendingUp, label: 'Analytics' },
+                { id: 'hosts', icon: Users, label: 'Hosts' },
                 { id: 'settings', icon: Settings, label: 'Settings' }
               ].map(item => (
                 <button
