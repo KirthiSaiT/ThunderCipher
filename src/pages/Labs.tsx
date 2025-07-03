@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Shield, Clock, Trophy, ChevronRight, Search, Filter } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -6,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 interface Lab {
   id: string;
@@ -28,6 +28,7 @@ const Labs = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState('All');
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const categories = ['All', 'Web Security', 'Binary Exploitation', 'Cryptography', 'Forensics', 'Reverse Engineering'];
   const difficulties = ['All', 'Easy', 'Medium', 'Hard'];
@@ -202,7 +203,12 @@ const Labs = () => {
                     </div>
                   </div>
                   
-                  <Button className="w-full glass-button bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-black font-bold group">
+                  <Button className="w-full glass-button bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-black font-bold group"
+                    onClick={() => {
+                      const categorySlug = lab.category.toLowerCase().replace(/\s+/g, '-');
+                      navigate(`/labs/${categorySlug}/${lab.id}`);
+                    }}
+                  >
                     Start Lab
                     <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" size={16} />
                   </Button>

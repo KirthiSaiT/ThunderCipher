@@ -23,6 +23,7 @@ import Achievements from "./pages/Achievements";
 import Events from "./pages/Events";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/admin/Admin";
+import LabDetail from "./pages/LabDetail";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/labs" element={<Labs />} />
+                <Route path="/labs/:category/:id" element={<LabDetail />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/attackerbox" element={<AttackerBox />} />
                 <Route path="/about" element={<About />} />
