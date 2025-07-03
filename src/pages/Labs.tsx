@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 interface Lab {
   id: string;
@@ -20,6 +22,30 @@ interface Lab {
   created_at: string;
   updated_at: string;
 }
+
+const labAuthors = [
+  {
+    name: 'Alex Chen',
+    role: 'Lab Creator',
+    image: '/placeholder.svg',
+    bio: 'Specializes in web security and CTF challenges.',
+    details: 'Alex has contributed 10+ labs focusing on real-world web vulnerabilities.'
+  },
+  {
+    name: 'Sarah Johnson',
+    role: 'Cryptography Expert',
+    image: '/placeholder.svg',
+    bio: 'Expert in cryptography and reverse engineering.',
+    details: 'Sarah authored several cryptography labs and guides.'
+  },
+  {
+    name: 'Marcus Rodriguez',
+    role: 'Binary Exploitation',
+    image: '/placeholder.svg',
+    bio: 'Focuses on binary exploitation and forensics.',
+    details: 'Marcus created advanced binary and forensics labs.'
+  }
+];
 
 const Labs = () => {
   const [labs, setLabs] = useState<Lab[]>([]);
@@ -109,9 +135,19 @@ const Labs = () => {
 
       <div className="relative z-10 container mx-auto px-4">
         {/* Header */}
-        <div className="mb-8 animate-fade-in-up">
-          <h1 className="text-4xl font-bold gradient-text mb-2">Security Labs</h1>
-          <p className="text-gray-400 font-mono">Hands-on cybersecurity challenges to sharpen your skills</p>
+        <div className="mb-8 animate-fade-in-up flex flex-col md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-4xl font-bold gradient-text mb-2">Security Labs</h1>
+            <p className="text-gray-400 font-mono">Hands-on cybersecurity challenges to sharpen your skills</p>
+          </div>
+          <Dialog>
+            <Button
+              className="glass-button bg-gradient-to-r from-cyan-500 to-teal-500 text-black font-bold mt-4 md:mt-0 md:ml-4"
+              onClick={() => navigate('/contributions')}
+            >
+              Contributions
+            </Button>
+          </Dialog>
         </div>
 
         {/* Search and Filters */}
