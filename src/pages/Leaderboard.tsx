@@ -139,29 +139,6 @@ const Leaderboard = () => {
             </table>
           </div>
         </Card>
-
-        {/* User Rank Card (if logged in and not in top 10) */}
-        {user && user.rank > 10 && (
-          <Card className="mt-6 glass-card border-cyan-500/50 p-4 animate-fade-in-up" style={{animationDelay: '0.5s'}}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <span className="text-cyan-400 font-bold">#{user.rank}</span>
-                <span className="font-bold text-cyan-400">{user.username}</span>
-                <span className="text-2xl">🇺🇸</span>
-              </div>
-              <div className="flex items-center space-x-6">
-                <div className="text-right">
-                  <div className="font-bold text-cyan-400 font-mono">{user.points}</div>
-                  <div className="text-gray-400 font-mono text-sm">points</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-gray-400 font-mono">{user.completedChallenges}</div>
-                  <div className="text-gray-400 font-mono text-sm">challenges</div>
-                </div>
-              </div>
-            </div>
-          </Card>
-        )}
       </div>
     </div>
   );
