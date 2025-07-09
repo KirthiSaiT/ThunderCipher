@@ -91,6 +91,23 @@ const LabDetail = () => {
           .from('profiles')
           .update({ points: newPoints })
           .eq('id', user.id);
+        // Recalculate and update ranks for all users
+        const { data: allUsers, error: allUsersError } = await supabase
+          .from('profiles')
+          .select('id, points');
+        if (!allUsersError && Array.isArray(allUsers)) {
+          // Sort users by points descending
+          const sorted = [...allUsers].sort((a, b) => (b.points || 0) - (a.points || 0));
+          // Assign ranks and update
+          for (let i = 0; i < sorted.length; i++) {
+            const userId = sorted[i].id;
+            const rank = i + 1;
+            await supabase
+              .from('profiles')
+              .update({ rank })
+              .eq('id', userId);
+          }
+        }
       }
       setCompleted(true);
     }
