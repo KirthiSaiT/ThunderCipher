@@ -12,20 +12,30 @@ const Challenges = () => {
   const [difficultyFilter, setDifficultyFilter] = useState('all');
 
   const challenges = [
-    { id: 1, name: 'SQL Injection Basics', category: 'Web Exploitation', difficulty: 'Easy', points: 50, description: 'Learn the fundamentals of SQL injection attacks', completed: true, locked: false },
-    { id: 2, name: 'Buffer Overflow 101', category: 'Binary Exploitation', difficulty: 'Medium', points: 100, description: 'Exploit a simple buffer overflow vulnerability', completed: true, locked: false },
-    { id: 3, name: 'XSS Challenge', category: 'Web Exploitation', difficulty: 'Easy', points: 75, description: 'Find and exploit cross-site scripting vulnerabilities', completed: false, locked: false },
-    { id: 4, name: 'RSA Encryption', category: 'Cryptography', difficulty: 'Hard', points: 200, description: 'Break weak RSA encryption implementation', completed: false, locked: false },
-    { id: 5, name: 'Reverse Engineering', category: 'Binary Exploitation', difficulty: 'Medium', points: 125, description: 'Reverse engineer a binary to find the flag', completed: false, locked: false },
-    { id: 6, name: 'Network Forensics', category: 'Forensics', difficulty: 'Medium', points: 110, description: 'Analyze network traffic to find malicious activity', completed: false, locked: false },
-    { id: 7, name: 'Advanced Crypto', category: 'Cryptography', difficulty: 'Hard', points: 250, description: 'Solve complex cryptographic puzzles', completed: false, locked: true },
-    { id: 8, name: 'Privilege Escalation', category: 'Binary Exploitation', difficulty: 'Hard', points: 180, description: 'Escalate privileges on a Linux system', completed: false, locked: false },
-    { id: 9, name: 'Web Shell Upload', category: 'Web Exploitation', difficulty: 'Medium', points: 90, description: 'Upload and execute a web shell', completed: false, locked: false },
-    { id: 10, name: 'Memory Forensics', category: 'Forensics', difficulty: 'Hard', points: 175, description: 'Analyze memory dumps for evidence', completed: false, locked: false },
+    { id: 1, name: 'SQL Injection Basics', category: 'Web Exploitation', difficulty: 'Easy', description: 'Learn the fundamentals of SQL injection attacks', completed: true, locked: false },
+    { id: 2, name: 'Buffer Overflow 101', category: 'Binary Exploitation', difficulty: 'Medium', description: 'Exploit a simple buffer overflow vulnerability', completed: true, locked: false },
+    { id: 3, name: 'XSS Challenge', category: 'Web Exploitation', difficulty: 'Easy', description: 'Find and exploit cross-site scripting vulnerabilities', completed: false, locked: false },
+    { id: 4, name: 'RSA Encryption', category: 'Cryptography', difficulty: 'Hard', description: 'Break weak RSA encryption implementation', completed: false, locked: false },
+    { id: 5, name: 'Reverse Engineering', category: 'Binary Exploitation', difficulty: 'Medium', description: 'Reverse engineer a binary to find the flag', completed: false, locked: false },
+    { id: 6, name: 'Network Forensics', category: 'Forensics', difficulty: 'Medium', description: 'Analyze network traffic to find malicious activity', completed: false, locked: false },
+    { id: 7, name: 'Advanced Crypto', category: 'Cryptography', difficulty: 'Hard', description: 'Solve complex cryptographic puzzles', completed: false, locked: true },
+    { id: 8, name: 'Privilege Escalation', category: 'Binary Exploitation', difficulty: 'Hard', description: 'Escalate privileges on a Linux system', completed: false, locked: false },
+    { id: 9, name: 'Web Shell Upload', category: 'Web Exploitation', difficulty: 'Medium', description: 'Upload and execute a web shell', completed: false, locked: false },
+    { id: 10, name: 'Memory Forensics', category: 'Forensics', difficulty: 'Hard', description: 'Analyze memory dumps for evidence', completed: false, locked: false },
   ];
 
   const categories = ['Web Exploitation', 'Binary Exploitation', 'Cryptography', 'Forensics'];
   const difficulties = ['Easy', 'Medium', 'Hard'];
+
+  // Helper to get points based on difficulty
+  const getPoints = (difficulty: string) => {
+    switch (difficulty) {
+      case 'Easy': return 100;
+      case 'Medium': return 200;
+      case 'Hard': return 500;
+      default: return 0;
+    }
+  };
 
   const filteredChallenges = challenges.filter(challenge => {
     const matchesSearch = challenge.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -128,7 +138,7 @@ const Challenges = () => {
                     {challenge.difficulty}
                   </span>
                   <span className="px-2 py-1 bg-cyan-900/50 text-cyan-400 rounded text-xs font-mono border border-cyan-500/30">
-                    {challenge.points} pts
+                    {getPoints(challenge.difficulty)} pts
                   </span>
                 </div>
 

@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Trophy, Target, Zap, Clock, TrendingUp, BookOpen, Users, Flag } from 'lucide-react';
@@ -7,9 +6,41 @@ import { useAuth } from '@/hooks/useAuth';
 import { Link } from 'react-router-dom';
 import LiveFeed from '@/components/LiveFeed';
 import CTFTimer from '@/components/CTFTimer';
+import { supabase } from '@/integrations/supabase/client';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const [progress, setProgress] = useState([]);
+  const [progressLoading, setProgressLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+    setProgressLoading(true);
+    const fetchProgress = async () => {
+      const { data, error } = await supabase
+        .from('progress')
+        .select('*')
+        .eq('user_id', user.id);
+      if (!error) setProgress(data || []);
+      setProgressLoading(false);
+    };
+    fetchProgress();
+
+    // Real-time subscription
+    const channel = supabase
+      .channel('public:progress')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'progress', filter: `user_id=eq.${user.id}` },
+        () => {
+          fetchProgress();
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
 
   if (!user) {
     return (
@@ -26,11 +57,18 @@ const Dashboard = () => {
     );
   }
 
+  // Calculate live stats from progress
+  const totalPoints = progress.reduce((sum, item) => sum + (item.progress || 0), 0);
+  const challengesSolved = progress.length;
+  // Placeholder: In a real app, rank and streak would be calculated globally
+  const currentRank = 'Live';
+  const currentStreak = 'Live';
+
   const quickStats = [
-    { label: 'Points', value: user.points, icon: Trophy, color: 'text-yellow-400' },
-    { label: 'Challenges Solved', value: user.completedChallenges, icon: Target, color: 'text-green-400' },
-    { label: 'Current Rank', value: `#${user.rank}`, icon: TrendingUp, color: 'text-cyan-400' },
-    { label: 'Current Streak', value: `${user.streak} days`, icon: Zap, color: 'text-purple-400' }
+    { label: 'Points', value: totalPoints, icon: Trophy, color: 'text-yellow-400' },
+    { label: 'Challenges Solved', value: challengesSolved, icon: Target, color: 'text-green-400' },
+    { label: 'Current Rank', value: currentRank, icon: TrendingUp, color: 'text-cyan-400' },
+    { label: 'Current Streak', value: currentStreak, icon: Zap, color: 'text-purple-400' }
   ];
 
   const recentChallenges = [
@@ -90,6 +128,28 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* User Progress Section */}
+            <Card className="glass-card p-6 mb-6">
+              <h2 className="text-xl font-bold text-white flex items-center mb-4">
+                <TrendingUp className="mr-2 text-cyan-400" />
+                Your Real-Time Progress
+              </h2>
+              {progressLoading ? (
+                <div className="text-cyan-400 font-mono">Loading progress...</div>
+              ) : progress.length === 0 ? (
+                <div className="text-gray-400 font-mono">No progress yet. Start solving challenges!</div>
+              ) : (
+                <ul className="space-y-2">
+                  {progress.map((item) => (
+                    <li key={item.id} className="flex items-center justify-between p-2 rounded bg-slate-800/60">
+                      <span className="font-mono text-cyan-300">Challenge: {item.challenge_id || 'N/A'}</span>
+                      <span className="font-mono text-green-400">Progress: {item.progress}</span>
+                      <span className="font-mono text-xs text-gray-400">{new Date(item.updated_at).toLocaleString()}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Card>
             {/* Recent Activity */}
             <Card className="glass-card p-6">
               <div className="flex items-center justify-between mb-6">

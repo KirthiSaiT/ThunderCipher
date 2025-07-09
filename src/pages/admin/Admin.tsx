@@ -60,6 +60,7 @@ const Admin = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [stats, setStats] = useState(mockStats);
   const [userCount, setUserCount] = useState<number | null>(null);
+  const [labsCount, setLabsCount] = useState<number | null>(null); // NEW
   const [recentActivity, setRecentActivity] = useState(mockRecentActivity);
 
   // Mock user object - replace with actual useAuth hook
@@ -72,6 +73,19 @@ const Admin = () => {
     };
     fetchUserCount();
     const interval = setInterval(fetchUserCount, 10000); // Poll every 10s
+    return () => clearInterval(interval);
+  }, []);
+
+  // NEW: Fetch labs count from Supabase
+  useEffect(() => {
+    const fetchLabsCount = async () => {
+      const { count, error } = await supabase
+        .from('labs')
+        .select('*', { count: 'exact', head: true });
+      if (!error && typeof count === 'number') setLabsCount(count);
+    };
+    fetchLabsCount();
+    const interval = setInterval(fetchLabsCount, 10000); // Poll every 10s
     return () => clearInterval(interval);
   }, []);
 
@@ -145,7 +159,7 @@ const Admin = () => {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard icon={Users} title="Total Users" value={userCount !== null ? userCount.toLocaleString() : '...'} change="+12%" changeType="positive" />
-        <StatCard icon={Shield} title="Active Labs" value={stats.activeLabs} change="+5%" changeType="positive" />
+        <StatCard icon={Shield} title="Active Labs" value={labsCount !== null ? labsCount : '...'} change="+5%" changeType="positive" />
         <StatCard icon={Flag} title="Running Challenges" value={stats.runningChallenges} change="+8%" changeType="positive" />
         <StatCard icon={Calendar} title="Upcoming Events" value={stats.upcomingEvents} change="+2%" changeType="positive" />
       </div>

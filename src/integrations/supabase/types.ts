@@ -103,7 +103,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
+      },
+      progress: {
+        Row: {
+          id: string;
+          user_id: string;
+          challenge_id: string | null;
+          progress: number;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          challenge_id?: string | null;
+          progress: number;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          challenge_id?: string | null;
+          progress?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "progress_user_id_fkey",
+            columns: ["user_id"],
+            isOneToOne: false,
+            referencedRelation: "profiles",
+            referencedColumns: ["id"]
+          }
+        ];
+      },
+      challenges: {
+        Row: {
+          id: string;
+          title: string;
+          description: string;
+          difficulty: string;
+          category: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          description: string;
+          difficulty: string;
+          category: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          description?: string;
+          difficulty?: string;
+          category?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      },
     }
     Views: {
       [_ in never]: never

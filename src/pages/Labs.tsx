@@ -66,7 +66,7 @@ const Labs = () => {
   const fetchLabs = async () => {
     try {
       const { data, error } = await supabase
-        .from('labs')
+        .from('challenges')
         .select('*')
         .order('created_at', { ascending: false });
 

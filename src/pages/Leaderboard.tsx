@@ -1,28 +1,26 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Trophy, Medal, Crown, TrendingUp } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 const Leaderboard = () => {
   const [timeFilter, setTimeFilter] = useState('all-time');
   const { user } = useAuth();
+  const [leaders, setLeaders] = useState([]);
 
-  const leaderboardData = [
-    { rank: 1, username: 'CyberNinja', points: 3250, challengesCompleted: 45, country: '🇺🇸', isCurrentUser: false },
-    { rank: 2, username: 'H4ck3rM4st3r', points: 3100, challengesCompleted: 42, country: '🇩🇪', isCurrentUser: false },
-    { rank: 3, username: 'QuantumBreaker', points: 2950, challengesCompleted: 38, country: '🇯🇵', isCurrentUser: false },
-    { rank: 4, username: 'BinaryGhost', points: 2800, challengesCompleted: 35, country: '🇬🇧', isCurrentUser: false },
-    { rank: 5, username: 'CryptoSolver', points: 2650, challengesCompleted: 33, country: '🇨🇦', isCurrentUser: false },
-    { rank: 6, username: 'WebExplorer', points: 2500, challengesCompleted: 31, country: '🇦🇺', isCurrentUser: false },
-    { rank: 7, username: 'ForensicHunter', points: 2350, challengesCompleted: 28, country: '🇸🇪', isCurrentUser: false },
-    { rank: 8, username: 'ReverseEngineer', points: 2200, challengesCompleted: 26, country: '🇳🇱', isCurrentUser: false },
-    { rank: 9, username: 'PwnMachine', points: 2050, challengesCompleted: 24, country: '🇫🇷', isCurrentUser: false },
-    { rank: 10, username: 'BufferKing', points: 1900, challengesCompleted: 22, country: '🇰🇷', isCurrentUser: false },
-    // Add current user
-    ...(user ? [{ rank: user.rank, username: user.username, points: user.points, challengesCompleted: user.completedChallenges, country: '🇺🇸', isCurrentUser: true }] : []),
-  ];
+  useEffect(() => {
+    async function fetchLeaderboard() {
+      const { data } = await supabase
+        .from('profiles')
+        .select('id, username, points')
+        .order('points', { ascending: false }); // Removed .limit(10)
+      setLeaders(data || []);
+    }
+    fetchLeaderboard();
+  }, []);
 
   const getRankIcon = (rank: number) => {
     switch (rank) {
@@ -86,23 +84,18 @@ const Leaderboard = () => {
 
         {/* Top 3 Podium */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {leaderboardData.slice(0, 3).map((player, index) => (
-            <Card key={player.rank} className={`p-6 text-center hover-lift animate-fade-in-up ${getRowStyle(player.rank, player.isCurrentUser)}`} style={{animationDelay: `${0.1 * index}s`}}>
+          {leaders.slice(0, 3).map((player, index) => (
+            <Card key={player.id} className={`p-6 text-center hover-lift animate-fade-in-up ${getRowStyle(index + 1, player.id === user?.id)}`} style={{animationDelay: `${0.1 * index}s`}}>
               <div className="mb-4">
-                {getRankIcon(player.rank)}
+                {getRankIcon(index + 1)}
               </div>
               <div className="space-y-2">
                 <h3 className="text-xl font-bold text-white">{player.username}</h3>
-                <div className="flex items-center justify-center space-x-2">
-                  <span className="text-2xl">{player.country}</span>
-                </div>
                 <div className="text-2xl font-bold text-cyan-400">{player.points}</div>
-                <div className="text-gray-400 font-mono text-sm">{player.challengesCompleted} challenges</div>
               </div>
             </Card>
           ))}
         </div>
-
         {/* Full Leaderboard Table */}
         <Card className="glass-card overflow-hidden animate-fade-in-up" style={{animationDelay: '0.4s'}}>
           <div className="p-6 border-b border-cyan-500/20">
@@ -111,49 +104,34 @@ const Leaderboard = () => {
               Full Rankings
             </h2>
           </div>
-          
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-black/30">
                 <tr className="text-left">
                   <th className="p-4 font-mono text-cyan-400">Rank</th>
                   <th className="p-4 font-mono text-cyan-400">Player</th>
-                  <th className="p-4 font-mono text-cyan-400">Country</th>
                   <th className="p-4 font-mono text-cyan-400">Points</th>
-                  <th className="p-4 font-mono text-cyan-400">Challenges</th>
                 </tr>
               </thead>
               <tbody>
-                {leaderboardData.map((player, index) => (
+                {leaders.map((player, index) => (
                   <tr 
-                    key={`${player.rank}-${player.username}`}
-                    className={`border-b border-cyan-500/10 transition-all duration-300 ${
-                      player.isCurrentUser ? 'bg-cyan-900/20' : 'hover:bg-gray-800/30'
-                    }`}
+                    key={player.id}
+                    className={`border-b border-cyan-500/10 transition-all duration-300 ${player.id === user?.id ? 'bg-cyan-900/20' : 'hover:bg-gray-800/30'}`}
                   >
                     <td className="p-4">
                       <div className="flex items-center">
-                        {getRankIcon(player.rank)}
+                        {getRankIcon(index + 1)}
                       </div>
                     </td>
                     <td className="p-4">
-                      <div className="flex items-center space-x-2">
-                        <span className={`font-bold ${player.isCurrentUser ? 'text-cyan-400' : 'text-white'}`}>
-                          {player.username}
-                        </span>
-                        {player.isCurrentUser && (
-                          <span className="px-2 py-1 bg-cyan-600 text-black text-xs rounded font-mono">YOU</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <span className="text-2xl">{player.country}</span>
+                      <span className={`font-bold ${player.id === user?.id ? 'text-cyan-400' : 'text-white'}`}>{player.username}</span>
+                      {player.id === user?.id && (
+                        <span className="px-2 py-1 bg-cyan-600 text-black text-xs rounded font-mono ml-2">YOU</span>
+                      )}
                     </td>
                     <td className="p-4">
                       <span className="font-bold text-cyan-400 font-mono">{player.points}</span>
-                    </td>
-                    <td className="p-4">
-                      <span className="text-gray-400 font-mono">{player.challengesCompleted}</span>
                     </td>
                   </tr>
                 ))}
