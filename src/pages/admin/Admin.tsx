@@ -80,7 +80,7 @@ const Admin = () => {
   useEffect(() => {
     const fetchLabsCount = async () => {
       const { count, error } = await supabase
-        .from('labs')
+        .from('challenges')
         .select('*', { count: 'exact', head: true });
       if (!error && typeof count === 'number') setLabsCount(count);
     };
