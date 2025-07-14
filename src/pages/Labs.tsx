@@ -55,6 +55,7 @@ const Labs = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [expandedLabId, setExpandedLabId] = useState<string | null>(null); // NEW
 
   const categories = ['All', 'Web Security', 'Binary Exploitation', 'Cryptography', 'Forensics', 'Reverse Engineering'];
   const difficulties = ['All', 'Easy', 'Medium', 'Hard'];
@@ -75,8 +76,17 @@ const Labs = () => {
       } else {
         // Type assertion to ensure proper typing
         const typedLabs = (data || []).map(lab => ({
-          ...lab,
-          difficulty: lab.difficulty as 'Easy' | 'Medium' | 'Hard'
+          id: lab.id,
+          title: lab.title,
+          description: lab.description,
+          difficulty: lab.difficulty as 'Easy' | 'Medium' | 'Hard',
+          category: lab.category,
+          points: lab?.points ?? 0,
+          content: lab?.content ?? '',
+          hints: lab?.hints ?? [],
+          solution: lab?.solution ?? '',
+          created_at: lab.created_at,
+          updated_at: lab.updated_at,
         }));
         setLabs(typedLabs);
       }
@@ -215,31 +225,21 @@ const Labs = () => {
             <p className="mt-4 text-gray-400 font-mono">Loading labs...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredLabs.map((lab, index) => (
-              <Card key={lab.id} className="glass-card p-6 hover-lift animate-fade-in-up" style={{animationDelay: `${0.1 * index}s`}}>
-                <div className="space-y-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-white mb-2">{lab.title}</h3>
-                      <p className="text-gray-400 text-sm mb-3">{lab.description}</p>
-                    </div>
+              <Card
+                key={lab.id}
+                className="glass-card p-6 hover-lift animate-fade-in-up flex flex-col transition-all duration-300"
+                style={{ animationDelay: `${0.1 * index}s`, minHeight: '180px' }}
+              >
+                <div className="flex-1 flex flex-col">
+                  <h3 className="text-xl font-bold text-white mb-2">{lab.title}</h3>
+                  <div className="flex items-center space-x-3 mb-3">
+                    <span className={`px-2 py-1 rounded text-xs font-mono border ${getDifficultyColor(lab.difficulty)}`}>{lab.difficulty}</span>
+                    <span className="text-gray-400 font-mono text-sm">{lab.category}</span>
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <span className={`px-2 py-1 rounded text-xs font-mono border ${getDifficultyColor(lab.difficulty)}`}>
-                        {lab.difficulty}
-                      </span>
-                      <span className="text-gray-400 font-mono text-sm">{lab.category}</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Trophy className="text-yellow-400" size={16} />
-                      <span className="text-cyan-400 font-mono text-sm">{lab.points}</span>
-                    </div>
-                  </div>
-                  
-                  <Button className="w-full glass-button bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-black font-bold group"
+                  <Button
+                    className="w-full glass-button bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-black font-bold group mt-auto"
                     onClick={() => {
                       const categorySlug = lab.category.toLowerCase().replace(/\s+/g, '-');
                       navigate(`/labs/${categorySlug}/${lab.id}`);
